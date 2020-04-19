@@ -9,6 +9,7 @@ import com.souf.karate.domain.db.LoginRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -18,21 +19,28 @@ public class AuditDataLogger {
 
     private final Logger logger = LoggerFactory.getLogger(AuditDataLogger.class);
 
-    private final KafkaService kafkaService;
-    private final DatabaseService databaseService;
+    @Value("${db.enabled}")
+    private boolean dbEnabled;
 
-    @Autowired
-    public AuditDataLogger(KafkaService kafkaService, DatabaseService databaseService){
-        this.kafkaService = kafkaService;
-        this.databaseService = databaseService;
-    }
+    @Value("${kafka.enabled}")
+    private boolean kafkaEnabled;
+
+    @Autowired(required = false)
+    private DatabaseService databaseService;
+    @Autowired(required = false)
+    private KafkaService kafkaService;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public void logEvent(int eventID, String tranId, String message, String env, String kafkaTopic, String appName){
         Event event = Event.builder().eventID(eventID).tranId(tranId).message(message).tranTs(Instant.now()).build();
-        kafkaService.sendToKafka(kafkaTopic,tranId,generateStringFromObject(event, env,appName), env);
-        databaseService.sendToDB(event, env);
+        String objectString = generateStringFromObject(event, env,appName);
+        if (dbEnabled){
+            databaseService.sendToDB(event, env);
+        }
+        if (kafkaEnabled){
+            kafkaService.sendToKafka(kafkaTopic,tranId,objectString, env);
+        }
     }
 
     public void logGoodLogin(String tranId, ApiRequest apiRequest, String env, String kafkaTopic, String appName){
@@ -43,8 +51,13 @@ public class AuditDataLogger {
                 .loginInfo("Login Successful")
                 .tranTs(Instant.now())
                 .build();
-        kafkaService.sendToKafka(kafkaTopic,tranId,generateStringFromObject(loginRequest, env,appName), env);
-        databaseService.sendToDB(loginRequest, env);
+        String objectString = generateStringFromObject(loginRequest, env,appName);
+        if (dbEnabled){
+            databaseService.sendToDB(loginRequest, env);
+        }
+        if (kafkaEnabled){
+            kafkaService.sendToKafka(kafkaTopic,tranId,objectString, env);
+        }
     }
 
     public void logBadLogin(String tranId, String reason, String userName, String env, String kafkaTopic, String appName){
@@ -54,8 +67,13 @@ public class AuditDataLogger {
                 .userName(userName)
                 .tranTs(Instant.now())
                 .build();
-        kafkaService.sendToKafka(kafkaTopic,tranId,generateStringFromObject(badLoginRequest, env,appName), env);
-        databaseService.sendToDB(badLoginRequest, env);
+        String objectString = generateStringFromObject(badLoginRequest, env,appName);
+        if (dbEnabled){
+            databaseService.sendToDB(badLoginRequest, env);
+        }
+        if (kafkaEnabled){
+            kafkaService.sendToKafka(kafkaTopic,tranId,objectString, env);
+        }
     }
 
     private String generateStringFromObject(Object object, String env, String appName){

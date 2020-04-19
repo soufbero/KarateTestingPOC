@@ -9,16 +9,14 @@ import com.souf.karate.repository.dev.LoginRequestRepositoryDEV;
 import com.souf.karate.repository.qa.BadLoginRequestRepositoryQA;
 import com.souf.karate.repository.qa.EventRepositoryQA;
 import com.souf.karate.repository.qa.LoginRequestRepositoryQA;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 @Service
+@ConditionalOnProperty(
+        value="db.enabled",
+        havingValue = "true")
 public class DatabaseService {
-
-    @Value("${db.enabled}")
-    private boolean dbEnabled;
 
     private final EventRepositoryDEV eventRepositoryDEV;
     private final EventRepositoryQA eventRepositoryQA;
@@ -27,7 +25,6 @@ public class DatabaseService {
     private final BadLoginRequestRepositoryDEV badLoginRequestRepositoryDEV;
     private final BadLoginRequestRepositoryQA badLoginRequestRepositoryQA;
 
-    @Autowired
     public DatabaseService(EventRepositoryDEV eventRepositoryDEV,
                            EventRepositoryQA eventRepositoryQA,
                            LoginRequestRepositoryDEV loginRequestRepositoryDEV,
@@ -43,32 +40,26 @@ public class DatabaseService {
     }
 
     public void sendToDB(Event event, String env){
-        if (dbEnabled){
-            if (env.equals("DEV")){
-                eventRepositoryDEV.save(event);
-            }else if (env.equals("QA")){
-                eventRepositoryQA.save(event);
-            }
+        if (env.equals("DEV")){
+            eventRepositoryDEV.save(event);
+        }else if (env.equals("QA")){
+            eventRepositoryQA.save(event);
         }
     }
 
     public void sendToDB(LoginRequest loginRequest, String env){
-        if (dbEnabled){
-            if (env.equals("DEV")){
-                loginRequestRepositoryDEV.save(loginRequest);
-            }else if (env.equals("QA")){
-                loginRequestRepositoryQA.save(loginRequest);
-            }
+        if (env.equals("DEV")){
+            loginRequestRepositoryDEV.save(loginRequest);
+        }else if (env.equals("QA")){
+            loginRequestRepositoryQA.save(loginRequest);
         }
     }
 
     public void sendToDB(BadLoginRequest badLoginRequest, String env){
-        if (dbEnabled){
-            if (env.equals("DEV")){
-                badLoginRequestRepositoryDEV.save(badLoginRequest);
-            }else if (env.equals("QA")){
-                badLoginRequestRepositoryQA.save(badLoginRequest);
-            }
+        if (env.equals("DEV")){
+            badLoginRequestRepositoryDEV.save(badLoginRequest);
+        }else if (env.equals("QA")){
+            badLoginRequestRepositoryQA.save(badLoginRequest);
         }
     }
 }

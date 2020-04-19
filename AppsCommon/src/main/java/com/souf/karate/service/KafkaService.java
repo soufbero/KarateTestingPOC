@@ -12,6 +12,9 @@ import javax.annotation.PostConstruct;
 import java.util.Properties;
 
 @Service
+@ConditionalOnProperty(
+        value="kafka.enabled",
+        havingValue = "true")
 public class KafkaService {
 
     @Value("${kafka.enabled}")
