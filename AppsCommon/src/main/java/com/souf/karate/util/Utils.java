@@ -19,6 +19,8 @@ public class Utils {
 
     private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
+    private Utils(){}
+
     private static Cipher cipherEncrypt;
     private static Cipher cipherDecrypt;
     static{
@@ -41,15 +43,6 @@ public class Utils {
                 | InvalidAlgorithmParameterException e){
             logger.error("Encryption/Decryption Ciphers could not be initialized",e);
         }
-    }
-
-
-    public static String encodeString(String input){
-        return new String(Base64.getEncoder().encode(input.getBytes()));
-    }
-
-    public static String decodeString(String input){
-        return new String(Base64.getDecoder().decode(input));
     }
 
     public static String encrypt(String strToEncrypt) {
@@ -79,5 +72,4 @@ public class Utils {
         return input == null || input.trim().isEmpty();
     }
 
-    private Utils(){}
 }
