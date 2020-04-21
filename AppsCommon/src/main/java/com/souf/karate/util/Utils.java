@@ -1,5 +1,8 @@
 package com.souf.karate.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +23,9 @@ public class Utils {
     private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
     private Utils(){}
+
+    private static final XmlMapper xmlMapper = XmlMapper.builder()
+            .enable(ToXmlGenerator.Feature.WRITE_XML_DECLARATION).build();
 
     private static Cipher cipherEncrypt;
     private static Cipher cipherDecrypt;
@@ -70,6 +76,14 @@ public class Utils {
 
     public static boolean isEmptyOrNull(String input){
         return input == null || input.trim().isEmpty();
+    }
+
+    public static String printObjectAsXMLString(Object object){
+        try {
+            return xmlMapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            return null;
+        }
     }
 
 }
