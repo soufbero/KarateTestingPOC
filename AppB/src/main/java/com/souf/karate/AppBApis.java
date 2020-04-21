@@ -51,7 +51,11 @@ public class AppBApis {
         String tranId = UUID.randomUUID().toString();
 
         if (encryptionEnabled && !Utils.isEmptyOrNull(apiRequest.getPassword())){
-            apiRequest.setPassword(Utils.encrypt(apiRequest.getPassword()));
+            if (env.equals("DEV")){
+                apiRequest.setPassword(Utils.encryptDev(apiRequest.getPassword()));
+            }else {
+                apiRequest.setPassword(Utils.encryptQa(apiRequest.getPassword()));
+            }
         }
 
         auditDataLogger.logEvent(1,tranId, apiRequest.toString(),env,topic1,applicationName);
@@ -97,7 +101,11 @@ public class AppBApis {
         }
 
         if (encryptionEnabled){
-            apiRequest.setPassword(Utils.encrypt(apiRequest.getPassword()));
+            if (env.equals("DEV")){
+                apiRequest.setPassword(Utils.encryptDev(apiRequest.getPassword()));
+            }else {
+                apiRequest.setPassword(Utils.encryptQa(apiRequest.getPassword()));
+            }
         }
 
         auditDataLogger.logEvent(4,tranId,null,env,topic1,applicationName);

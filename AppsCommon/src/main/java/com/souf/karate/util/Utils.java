@@ -27,35 +27,34 @@ public class Utils {
     private static final XmlMapper xmlMapper = XmlMapper.builder()
             .enable(ToXmlGenerator.Feature.WRITE_XML_DECLARATION).build();
 
-    private static Cipher cipherEncrypt;
-    private static Cipher cipherDecrypt;
+    private static Cipher cipherEncryptDev;
+    private static Cipher cipherEncryptQa;
     static{
         try{
-            String secretKey = "secret@Key@used";
-            String salt = "salt@value";
             byte[] iv = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-            IvParameterSpec ivspec = new IvParameterSpec(iv);
-
+            IvParameterSpec ivSpec = new IvParameterSpec(iv);
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-            KeySpec spec = new PBEKeySpec(secretKey.toCharArray(), salt.getBytes(), 65536, 256);
-            SecretKey tmp = factory.generateSecret(spec);
-            SecretKeySpec secretKeySpec = new SecretKeySpec(tmp.getEncoded(), "AES");
 
-            cipherEncrypt = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipherDecrypt = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipherEncrypt.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivspec);
-            cipherDecrypt.init(Cipher.DECRYPT_MODE, secretKeySpec, ivspec);
+            KeySpec specDev = new PBEKeySpec(Constants.SECRET_KEY_DEV.toCharArray(), Constants.SALT_DEV.getBytes(), 65536, 256);
+            SecretKeySpec secretKeySpecDev = new SecretKeySpec(factory.generateSecret(specDev).getEncoded(), "AES");
+            cipherEncryptDev = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipherEncryptDev.init(Cipher.ENCRYPT_MODE, secretKeySpecDev, ivSpec);
+
+            KeySpec specQa = new PBEKeySpec(Constants.SECRET_KEY_QA.toCharArray(), Constants.SALT_QA.getBytes(), 65536, 256);
+            SecretKeySpec secretKeySpecQa = new SecretKeySpec(factory.generateSecret(specQa).getEncoded(), "AES");
+            cipherEncryptQa = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipherEncryptQa.init(Cipher.ENCRYPT_MODE, secretKeySpecQa, ivSpec);
         }catch (InvalidKeySpecException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException
                 | InvalidAlgorithmParameterException e){
-            logger.error("Encryption/Decryption Ciphers could not be initialized",e);
+            logger.error("Encryption Ciphers could not be initialized",e);
         }
     }
 
-    public static String encrypt(String strToEncrypt) {
+    public static String encryptDev(String strToEncrypt) {
         try {
-            if (cipherEncrypt != null){
+            if (cipherEncryptDev != null){
                 return Base64.getEncoder()
-                        .encodeToString(cipherEncrypt.doFinal(strToEncrypt.getBytes(StandardCharsets.UTF_8)));
+                        .encodeToString(cipherEncryptDev.doFinal(strToEncrypt.getBytes(StandardCharsets.UTF_8)));
             }
         } catch (BadPaddingException | IllegalBlockSizeException e) {
             logger.error("Cannot Encrypt",e);
@@ -63,16 +62,19 @@ public class Utils {
         return strToEncrypt;
     }
 
-    public static String decrypt(String strToDecrypt) {
+    public static String encryptQa(String strToEncrypt) {
         try {
-            if (cipherDecrypt != null){
-                return new String(cipherDecrypt.doFinal(Base64.getDecoder().decode(strToDecrypt)));
+            if (cipherEncryptQa != null){
+                return Base64.getEncoder()
+                        .encodeToString(cipherEncryptQa.doFinal(strToEncrypt.getBytes(StandardCharsets.UTF_8)));
             }
-        } catch (IllegalBlockSizeException | BadPaddingException e) {
-            logger.error("Cannot Decrypt",e);
+        } catch (BadPaddingException | IllegalBlockSizeException e) {
+            logger.error("Cannot Encrypt",e);
         }
-        return strToDecrypt;
+        return strToEncrypt;
     }
+
+
 
     public static boolean isEmptyOrNull(String input){
         return input == null || input.trim().isEmpty();

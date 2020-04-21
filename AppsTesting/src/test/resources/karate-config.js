@@ -15,7 +15,8 @@ function fn() {
         dbPassword: '',
         dbDriver: '',
         kafkaBrokers:'',
-        kafkaTopics:''
+        kafkaTopics:'',
+        encryptionEnv:''
     };
 
     if (env === 'dev') {
@@ -48,6 +49,9 @@ function fn() {
                 config.kafkaTopics = 'TopicEventAppAandAppB,TopicLoginAppB,TopicEventAppC,TopicLoginAppC,TopicBadLoginAppC';
             }
         }
+        if (encryption === 'true'){
+            config.encryptionEnv = "DevEncryption"
+        }
     } else if (env === 'qa') {
         config.urlAppAapi1 = 'http://localhost:8080/qa/api1';
         config.urlAppBapi1 = 'http://localhost:8081/qa/api1';
@@ -76,6 +80,9 @@ function fn() {
             }else if (apps.contains('AppA') && !apps.contains('AppB') && !apps.contains('AppC')){
                 config.kafkaTopics = 'TopicEventAppAandAppB,TopicLoginAppB,TopicEventAppC,TopicLoginAppC,TopicBadLoginAppC';
             }
+        }
+        if (encryption === 'true'){
+            config.encryptionEnv = "QaEncryption"
         }
     }
 

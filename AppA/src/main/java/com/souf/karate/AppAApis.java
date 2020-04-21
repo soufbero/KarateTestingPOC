@@ -48,7 +48,11 @@ public class AppAApis {
         String tranId = UUID.randomUUID().toString();
 
         if (encryptionEnabled && !Utils.isEmptyOrNull(apiRequest.getPassword())){
-            apiRequest.setPassword(Utils.encrypt(apiRequest.getPassword()));
+            if (env.equals("DEV")){
+                apiRequest.setPassword(Utils.encryptDev(apiRequest.getPassword()));
+            }else {
+                apiRequest.setPassword(Utils.encryptQa(apiRequest.getPassword()));
+            }
         }
 
         auditDataLogger.logEvent(1,tranId, apiRequest.toString(),env,topic1,applicationName);

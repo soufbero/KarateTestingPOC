@@ -74,7 +74,11 @@ public class AppCApis {
         }
 
         if (encryptionEnabled){
-            apiRequest.setPassword(Utils.encrypt(apiRequest.getPassword()));
+            if (env.equals("DEV")){
+                apiRequest.setPassword(Utils.encryptDev(apiRequest.getPassword()));
+            }else {
+                apiRequest.setPassword(Utils.encryptQa(apiRequest.getPassword()));
+            }
         }
 
         auditDataLogger.logEvent(6,tranId,null,env,topic3,applicationName);

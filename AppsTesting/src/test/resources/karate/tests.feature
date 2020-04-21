@@ -12,6 +12,8 @@ Feature: Testing a REST API with Karate
       }
       """
     * def sleep = function(millis){ java.lang.Thread.sleep(millis) }
+    * def EncryptionUtils = Java.type('com.souf.karate.EncryptionUtils')
+    * def encryption = new EncryptionUtils(encryptionEnv)
     * def dbConfig = { dbUsername: '#(dbUsername)', dbPassword: '#(dbPassword)', dbUrl: '#(dbUrl)', dbDriver: '#(dbDriver)' }
     * def DbUtils = Java.type('com.souf.karate.DbUtils')
     * def db = new DbUtils(dbConfig)
