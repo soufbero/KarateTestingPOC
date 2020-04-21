@@ -18,6 +18,8 @@
         <surefire.version>2.22.2</surefire.version>
         <spring-jdbc.version>5.2.5.RELEASE</spring-jdbc.version>
         <mysql-connector.version>8.0.19</mysql-connector.version>
+        <kafa-clients.version>2.5.0</kafa-clients.version>
+        <json.version>20190722</json.version>
     </properties>
 
     <dependencies>
@@ -42,6 +44,16 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>${mysql-connector.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>${kafa-clients.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>${json.version}</version>
         </dependency>
     </dependencies>
 

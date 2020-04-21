@@ -13,7 +13,9 @@ function fn() {
         dbUrl: '',
         dbUsername: '',
         dbPassword: '',
-        dbDriver: ''
+        dbDriver: '',
+        kafkaBrokers:'',
+        kafkaTopics:''
     };
 
     if (env === 'dev') {
@@ -28,6 +30,24 @@ function fn() {
             config.dbPassword = 'dbpassword';
             config.dbDriver = 'com.mysql.cj.jdbc.Driver';
         }
+        if (kafka == 'true'){
+            config.kafkaBrokers = 'localhost:9094';
+            if (apps.contains('AppA') && !apps.contains('AppB') && !apps.contains('AppC')){
+                config.kafkaTopics = 'TopicEventAppAandAppB';
+            }else if (!apps.contains('AppA') && apps.contains('AppB') && !apps.contains('AppC')){
+                config.kafkaTopics = 'TopicEventAppAandAppB,TopicLoginAppB';
+            }else if (!apps.contains('AppA') && !apps.contains('AppB') && apps.contains('AppC')){
+                config.kafkaTopics = 'TopicEventAppC,TopicLoginAppC,TopicBadLoginAppC';
+            }else if (apps.contains('AppA') && apps.contains('AppB') && !apps.contains('AppC')){
+                config.kafkaTopics = 'TopicEventAppAandAppB,TopicLoginAppB';
+            }else if (apps.contains('AppA') && !apps.contains('AppB') && apps.contains('AppC')){
+                config.kafkaTopics = 'TopicEventAppAandAppB,TopicEventAppC,TopicLoginAppC,TopicBadLoginAppC';
+            }else if (!apps.contains('AppA') && apps.contains('AppB') && apps.contains('AppC')){
+                config.kafkaTopics = 'TopicEventAppAandAppB,TopicLoginAppB,TopicEventAppC,TopicLoginAppC,TopicBadLoginAppC';
+            }else if (apps.contains('AppA') && !apps.contains('AppB') && !apps.contains('AppC')){
+                config.kafkaTopics = 'TopicEventAppAandAppB,TopicLoginAppB,TopicEventAppC,TopicLoginAppC,TopicBadLoginAppC';
+            }
+        }
     } else if (env === 'qa') {
         config.urlAppAapi1 = 'http://localhost:8080/qa/api1';
         config.urlAppBapi1 = 'http://localhost:8081/qa/api1';
@@ -38,6 +58,24 @@ function fn() {
             config.dbUsername = 'dbuser';
             config.dbPassword = 'dbpassword';
             config.dbDriver = 'com.mysql.cj.jdbc.Driver';
+        }
+        if (kafka == 'true'){
+            config.kafkaBrokers = 'localhost:9093';
+            if (apps.contains('AppA') && !apps.contains('AppB') && !apps.contains('AppC')){
+                config.kafkaTopics = 'TopicEventAppAandAppB';
+            }else if (!apps.contains('AppA') && apps.contains('AppB') && !apps.contains('AppC')){
+                config.kafkaTopics = 'TopicEventAppAandAppB,TopicLoginAppB';
+            }else if (!apps.contains('AppA') && !apps.contains('AppB') && apps.contains('AppC')){
+                config.kafkaTopics = 'TopicEventAppC,TopicLoginAppC,TopicBadLoginAppC';
+            }else if (apps.contains('AppA') && apps.contains('AppB') && !apps.contains('AppC')){
+                config.kafkaTopics = 'TopicEventAppAandAppB,TopicLoginAppB';
+            }else if (apps.contains('AppA') && !apps.contains('AppB') && apps.contains('AppC')){
+                config.kafkaTopics = 'TopicEventAppAandAppB,TopicEventAppC,TopicLoginAppC,TopicBadLoginAppC';
+            }else if (!apps.contains('AppA') && apps.contains('AppB') && apps.contains('AppC')){
+                config.kafkaTopics = 'TopicEventAppAandAppB,TopicLoginAppB,TopicEventAppC,TopicLoginAppC,TopicBadLoginAppC';
+            }else if (apps.contains('AppA') && !apps.contains('AppB') && !apps.contains('AppC')){
+                config.kafkaTopics = 'TopicEventAppAandAppB,TopicLoginAppB,TopicEventAppC,TopicLoginAppC,TopicBadLoginAppC';
+            }
         }
     }
 
