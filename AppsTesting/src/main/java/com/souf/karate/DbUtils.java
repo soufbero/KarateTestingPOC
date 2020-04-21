@@ -34,4 +34,9 @@ public class DbUtils {
         String query = "SELECT EVT_ID FROM EVENTS WHERE TRAN_ID = '" + tranId + "' order by EVT_ID asc";
         return jdbc.queryForList(query,Integer.class);
     }
+
+    public String getMessageTextForEvent(String tranId, int eventId){
+        String query = "SELECT MESSAGE_TXT FROM EVENTS WHERE TRAN_ID = '" + tranId + "' AND EVT_ID = " + eventId;
+        return jdbc.queryForObject(query, String.class);
+    }
 }

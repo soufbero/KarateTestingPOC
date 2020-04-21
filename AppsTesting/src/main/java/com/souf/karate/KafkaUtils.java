@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class KafkaUtils {
 
@@ -91,6 +91,19 @@ public class KafkaUtils {
         });
         Collections.sort(events);
         return events;
+    }
+
+    public static String getMessageTextForEvent(String tranId, int eventID){
+        AtomicReference<String> message = new AtomicReference<>(null);
+        List<String> messages =  transactionsAndMessagesMap.get(tranId);
+        messages.forEach(m ->{
+            JSONObject jsonObject = new JSONObject(m);
+            if (jsonObject.has("eventID") && jsonObject.has("message")
+                    && jsonObject.getInt("eventID") == eventID){
+                message.set(jsonObject.getString("message"));
+            }
+        });
+        return message.get();
     }
 
 

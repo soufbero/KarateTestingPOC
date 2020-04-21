@@ -25,7 +25,8 @@ public class Utils {
     private Utils(){}
 
     private static final XmlMapper xmlMapper = XmlMapper.builder()
-            .enable(ToXmlGenerator.Feature.WRITE_XML_DECLARATION).build();
+            .enable(ToXmlGenerator.Feature.WRITE_XML_DECLARATION)
+            .build();
 
     private static Cipher cipherEncryptDev;
     private static Cipher cipherEncryptQa;
