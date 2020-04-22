@@ -1,9 +1,11 @@
 package com.souf.karate;
 
+import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.config.SslConfigs;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.json.JSONObject;
 
@@ -28,6 +30,8 @@ public class KafkaUtils {
     public static void initializeConsumer(Map<String, Object> config) {
         String kafkaBrokers = (String) config.get("kafkaBrokers");
         String kafkaTopics = (String) config.get("kafkaTopics");
+        String kafkaCertPath = (String) config.get("kafkaCertPath");
+        String kafkaCertPass = (String) config.get("kafkaCertPass");
         Properties props = new Properties();
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
@@ -35,6 +39,16 @@ public class KafkaUtils {
         String consumerGroupID = "AppsTestGroup-" + LocalDateTime.now().format(formatter);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroupID);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
+
+        props.put(AdminClientConfig.SECURITY_PROTOCOL_CONFIG,"SSL");
+        props.put(SslConfigs.SSL_PROTOCOL_CONFIG,"TLSv1.2");
+        props.put(SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG,"TLSv1.2");
+        props.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, kafkaCertPath);
+        props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, kafkaCertPath);
+        props.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, kafkaCertPass);
+        props.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, kafkaCertPass);
+        props.put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, kafkaCertPass);
+
         consumer = new KafkaConsumer<>(props);
         consumer.subscribe(Arrays.asList(kafkaTopics.split(",")));
     }

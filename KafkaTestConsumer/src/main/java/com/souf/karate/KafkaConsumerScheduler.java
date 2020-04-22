@@ -1,9 +1,11 @@
 package com.souf.karate;
 
+import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.config.SslConfigs;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +41,14 @@ public class KafkaConsumerScheduler {
     private String topic4;
     @Value("${kafka.topic.5}")
     private String topic5;
+    @Value("${kafka.ssl.cert.dev}")
+    private String kafkaSSLCertPathDEV;
+    @Value("${kafka.ssl.pass.dev}")
+    private String kafkaSSLCertPassDEV;
+    @Value("${kafka.ssl.cert.qa}")
+    private String kafkaSSLCertPathQA;
+    @Value("${kafka.ssl.pass.qa}")
+    private String kafkaSSLCertPassQA;
 
     private Consumer<String, String> consumerDEV;
     private Consumer<String, String> consumerQA;
@@ -50,7 +60,14 @@ public class KafkaConsumerScheduler {
         propsDev.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         propsDev.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, brokersDEV);
         propsDev.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroupId);
-        propsDev.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, consumerStrategy);
+        propsDev.put(AdminClientConfig.SECURITY_PROTOCOL_CONFIG,"SSL");
+        propsDev.put(SslConfigs.SSL_PROTOCOL_CONFIG,"TLSv1.2");
+        propsDev.put(SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG,"TLSv1.2");
+        propsDev.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, kafkaSSLCertPathDEV);
+        propsDev.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, kafkaSSLCertPathDEV);
+        propsDev.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, kafkaSSLCertPassDEV);
+        propsDev.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, kafkaSSLCertPassDEV);
+        propsDev.put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, kafkaSSLCertPassDEV);
         consumerDEV = new KafkaConsumer<>(propsDev);
 
         Properties propsQA = new Properties();
@@ -59,6 +76,14 @@ public class KafkaConsumerScheduler {
         propsQA.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, brokersQA);
         propsQA.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroupId);
         propsQA.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, consumerStrategy);
+        propsQA.put(AdminClientConfig.SECURITY_PROTOCOL_CONFIG,"SSL");
+        propsQA.put(SslConfigs.SSL_PROTOCOL_CONFIG,"TLSv1.2");
+        propsQA.put(SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG,"TLSv1.2");
+        propsQA.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, kafkaSSLCertPathQA);
+        propsQA.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, kafkaSSLCertPathQA);
+        propsQA.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, kafkaSSLCertPassQA);
+        propsQA.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, kafkaSSLCertPassQA);
+        propsQA.put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, kafkaSSLCertPassQA);
         consumerQA = new KafkaConsumer<>(propsQA);
 
         consumerDEV.subscribe(Arrays.asList(topic1,topic2,topic3,topic4,topic5));

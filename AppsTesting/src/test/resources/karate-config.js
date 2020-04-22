@@ -16,6 +16,8 @@ function fn() {
         dbDriver: '',
         kafkaBrokers:'',
         kafkaTopics:'',
+        kafkaCertPath:'',
+        kafkaCertPass:'',
         encryptionEnv:''
     };
 
@@ -33,6 +35,8 @@ function fn() {
         }
         if (kafka == 'true'){
             config.kafkaBrokers = 'localhost:9094';
+            config.kafkaCertPath = 'C:/Users/soufi/Desktop/Soufiane/dev/KarateTestingPOC/KarateKafkaDev.jks';
+            config.kafkaCertPass = 'karatetestingcertpass';
             if (apps.contains('AppA') && !apps.contains('AppB') && !apps.contains('AppC')){
                 config.kafkaTopics = 'TopicEventAppAandAppB';
             }else if (!apps.contains('AppA') && apps.contains('AppB') && !apps.contains('AppC')){
@@ -65,6 +69,8 @@ function fn() {
         }
         if (kafka == 'true'){
             config.kafkaBrokers = 'localhost:9093';
+            config.kafkaCertPath = 'C:/Users/soufi/Desktop/Soufiane/dev/KarateTestingPOC/KarateKafkaQa.jks';
+            config.kafkaCertPass = 'karatetestingcertpass';
             if (apps.contains('AppA') && !apps.contains('AppB') && !apps.contains('AppC')){
                 config.kafkaTopics = 'TopicEventAppAandAppB';
             }else if (!apps.contains('AppA') && apps.contains('AppB') && !apps.contains('AppC')){

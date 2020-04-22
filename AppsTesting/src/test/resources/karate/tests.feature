@@ -17,7 +17,7 @@ Feature: Testing a REST API with Karate
     * def dbConfig = { dbUsername: '#(dbUsername)', dbPassword: '#(dbPassword)', dbUrl: '#(dbUrl)', dbDriver: '#(dbDriver)' }
     * def DbUtils = Java.type('com.souf.karate.DbUtils')
     * def db = new DbUtils(dbConfig)
-    * def kafkaConfig = { kafkaBrokers: '#(kafkaBrokers)', kafkaTopics: '#(kafkaTopics)' }
+    * def kafkaConfig = { kafkaBrokers: '#(kafkaBrokers)', kafkaTopics: '#(kafkaTopics)', kafkaCertPath: '#(kafkaCertPath)', kafkaCertPass: '#(kafkaCertPass)' }
     * def KafkaUtils = Java.type('com.souf.karate.KafkaUtils')
     * callonce KafkaUtils.initializeConsumer(kafkaConfig)
     * eval sleep(15000)
