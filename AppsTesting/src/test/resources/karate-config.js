@@ -22,10 +22,10 @@ function fn() {
     };
 
     if (env === 'dev') {
-        config.urlAppAapi1 = 'http://localhost:8080/dev/api1';
-        config.urlAppBapi1 = 'http://localhost:8081/dev/api1';
-        config.urlAppBapi2 = 'http://localhost:8081/dev/api2';
-        config.urlAppCapi1 = 'http://localhost:8083/dev/api1';
+        config.urlAppAapi1 = 'https://localhost:8080/dev/api1';
+        config.urlAppBapi1 = 'https://localhost:8081/dev/api1';
+        config.urlAppBapi2 = 'https://localhost:8081/dev/api2';
+        config.urlAppCapi1 = 'https://localhost:8083/dev/api1';
         if (db === 'true'){
             karate.log('Got HERE 1111');
             config.dbUrl = 'jdbc:mysql://localhost:3306/appadevdb';
@@ -57,10 +57,10 @@ function fn() {
             config.encryptionEnv = "DevEncryption"
         }
     } else if (env === 'qa') {
-        config.urlAppAapi1 = 'http://localhost:8080/qa/api1';
-        config.urlAppBapi1 = 'http://localhost:8081/qa/api1';
-        config.urlAppBapi2 = 'http://localhost:8081/qa/api2';
-        config.urlAppCapi1 = 'http://localhost:8083/qa/api1';
+        config.urlAppAapi1 = 'https://localhost:8080/qa/api1';
+        config.urlAppBapi1 = 'https://localhost:8081/qa/api1';
+        config.urlAppBapi2 = 'https://localhost:8081/qa/api2';
+        config.urlAppCapi1 = 'https://localhost:8083/qa/api1';
         if (db === 'true'){
             config.dbUrl = 'jdbc:mysql://localhost:3306/appaqadb';
             config.dbUsername = 'dbuser';
@@ -91,6 +91,8 @@ function fn() {
             config.encryptionEnv = "QaEncryption"
         }
     }
+
+    karate.configure('ssl', {trustAll: true, keyStorePassword: 'karatetestingcertpass', keyStoreType: 'pkcs12', keyStore: 'C:/Users/soufi/Desktop/Soufiane/dev/KarateTestingPOC/KarateApiDevQA.pfx'});
 
     return config;
 }
