@@ -19,14 +19,28 @@ import org.apache.commons.io.FileUtils;
 
 public class KarateIntegrationTest {
 
+    private static final String karateOutputPath = "target/surefire-reports";
+
     @BeforeAll
     static void initializeIntegrationPoints(){
         List<String> paths = new ArrayList<>();
         paths.add("classpath:karate/PreTests");
-        String karateOutputPath = "target/surefire-reports";
         Results results = Runner.parallel(null,paths,1,karateOutputPath);
         generateReport(karateOutputPath);
         assertEquals(0, results.getFailCount(), results.getErrorMessages());
+
+        boolean smokeTest = Boolean.valueOf(System.getProperty("smoke"));
+        if (smokeTest){
+            paths.clear();
+            paths.add("classpath:karate/Smoke");
+            List<String> tagsList = Arrays.stream(
+                    System.getProperty("apps").split(","))
+                    .map(c -> "@" + c).collect(Collectors.toList());
+            List<String> singleLineTags = Arrays.asList(String.join(",", tagsList));
+            results = Runner.parallel(singleLineTags,paths,tagsList.size(),karateOutputPath);
+            generateReport(karateOutputPath);
+            assertEquals(0, results.getFailCount(), results.getErrorMessages());
+        }
     }
 
     @Test
@@ -34,7 +48,6 @@ public class KarateIntegrationTest {
         List<String> paths = Arrays.stream(
                 System.getProperty("apps").split(","))
                 .map(c -> "classpath:karate/" + c).collect(Collectors.toList());
-        String karateOutputPath = "target/surefire-reports";
         Results results = Runner.parallel(null,paths,5,karateOutputPath);
         generateReport(karateOutputPath);
         assertEquals(0, results.getFailCount(), results.getErrorMessages());
@@ -44,7 +57,7 @@ public class KarateIntegrationTest {
         Collection<File> jsonFiles = FileUtils.listFiles(new File(karateOutputPath), new String[] {"json"}, true);
         List<String> jsonPaths = new ArrayList(jsonFiles.size());
         jsonFiles.forEach(file -> jsonPaths.add(file.getAbsolutePath()));
-        Configuration config = new Configuration(new File("target"), "demo");
+        Configuration config = new Configuration(new File("target"), "App Testing");
         ReportBuilder reportBuilder = new ReportBuilder(jsonPaths, config);
         reportBuilder.generateReports();
     }

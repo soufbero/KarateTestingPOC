@@ -35,7 +35,6 @@ function fn() {
         config.urlAppBapi2 = 'https://localhost:8081/dev/api2';
         config.urlAppCapi1 = 'https://localhost:8083/dev/api1';
         if (db === 'true'){
-            //karate.log('Got HERE');
             config.validateDB = true;
             config.dbUrl = 'jdbc:mysql://localhost:3306/appadevdb';
             config.dbUsername = 'dbuser';

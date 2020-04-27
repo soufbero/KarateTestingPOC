@@ -1,4 +1,4 @@
-Feature: Pre Tests Setup
+Feature: Pre-Tests Setup
 
   Scenario: Setup Integration Points
     * def sleep = function(millis){ java.lang.Thread.sleep(millis) }
