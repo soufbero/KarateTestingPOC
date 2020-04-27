@@ -20,7 +20,7 @@ import org.apache.commons.io.FileUtils;
 public class KarateIntegrationTest {
 
     @BeforeAll
-    static void initiateIntegrationPoints(){
+    static void initializeIntegrationPoints(){
         List<String> paths = new ArrayList<>();
         paths.add("classpath:karate/PreTests");
         String karateOutputPath = "target/surefire-reports";
@@ -31,7 +31,6 @@ public class KarateIntegrationTest {
 
     @Test
     void testFullPathParallel() {
-
         List<String> paths = Arrays.stream(
                 System.getProperty("apps").split(","))
                 .map(c -> "classpath:karate/" + c).collect(Collectors.toList());

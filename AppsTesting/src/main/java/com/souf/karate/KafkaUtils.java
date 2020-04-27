@@ -49,7 +49,6 @@ public class KafkaUtils {
             props.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, kafkaCertPass);
             props.put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, kafkaCertPass);
             consumer = new KafkaConsumer<>(props);
-            System.out.println("Kafka Topics: " + kafkaTopics);
             consumer.subscribe(Arrays.asList(kafkaTopics.split(",")));
         }
     }
