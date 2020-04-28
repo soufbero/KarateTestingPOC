@@ -6,27 +6,11 @@ function fn() {
     var encryption = karate.properties['encryption'];
 
     var config = {
-        urlAppAapi1: '',
-        urlAppBapi1: '',
-        urlAppBapi2: '',
-        urlAppCapi1: '',
-        validateDB:false,
-        dbUrl: '',
-        dbUsername: '',
-        dbPassword: '',
-        dbDriver: '',
-        validateKafka:false,
-        kafkaBrokers:'',
-        kafkaTopics:'',
-        kafkaTopic1:'',
-        kafkaTopic2:'',
-        kafkaTopic3:'',
-        kafkaTopic4:'',
-        kafkaTopic5:'',
-        kafkaCertPath:'',
-        kafkaCertPass:'',
-        validateEncryption:false,
-        encryptionEnv:''
+        urlAppAapi1: '', urlAppBapi1: '', urlAppBapi2: '', urlAppCapi1: '',
+        validateDB:false, dbUrl: '', dbUsername: '', dbPassword: '', dbDriver: '',
+        validateKafka:false, kafkaBrokers:'', kafkaTopics:'', kafkaCertPath:'', kafkaCertPass:'',
+        kafkaTopic1:'', kafkaTopic2:'', kafkaTopic3:'', kafkaTopic4:'', kafkaTopic5:'',
+        validateEncryption:false, encryptionEnv:''
     };
 
     if (env === 'dev') {
@@ -44,7 +28,7 @@ function fn() {
         if (kafka === 'true'){
             config.validateKafka = true;
             config.kafkaBrokers = 'localhost:9094';
-            config.kafkaCertPath = 'C:/Users/soufi/Desktop/Soufiane/dev/KarateTestingPOC/KarateKafkaDev.jks';
+            config.kafkaCertPath = 'certs/KarateKafkaDev.jks';
             config.kafkaCertPass = 'karatetestingcertpass';
             if (apps.contains('AppA') && !apps.contains('AppB') && !apps.contains('AppC')){
                 config.kafkaTopics = 'TopicEventAppAandAppB';
@@ -86,7 +70,7 @@ function fn() {
         if (kafka === 'true'){
             config.validateKafka = true;
             config.kafkaBrokers = 'localhost:9093';
-            config.kafkaCertPath = 'C:/Users/soufi/Desktop/Soufiane/dev/KarateTestingPOC/KarateKafkaQa.jks';
+            config.kafkaCertPath = 'certs/KarateKafkaQa.jks';
             config.kafkaCertPass = 'karatetestingcertpass';
             if (apps.contains('AppA') && !apps.contains('AppB') && !apps.contains('AppC')){
                 config.kafkaTopics = 'TopicEventAppAandAppB';
@@ -115,7 +99,12 @@ function fn() {
         }
     }
 
-    karate.configure('ssl', {trustAll: true, keyStorePassword: 'karatetestingcertpass', keyStoreType: 'pkcs12', keyStore: 'C:/Users/soufi/Desktop/Soufiane/dev/KarateTestingPOC/KarateApiDevQA.pfx'});
+    karate.configure('ssl', {
+        trustAll: true,
+        keyStorePassword: 'karatetestingcertpass',
+        keyStoreType: 'pkcs12',
+        keyStore: 'classpath:certs/KarateApiDevQA.pfx'}
+        );
 
     return config;
 }

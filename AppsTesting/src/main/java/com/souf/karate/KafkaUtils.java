@@ -9,6 +9,7 @@ import org.apache.kafka.common.config.SslConfigs;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,7 +18,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class KafkaUtils {
+public class KafkaUtils{
 
     private static Consumer<String, String> consumer;
 
@@ -26,7 +27,7 @@ public class KafkaUtils {
 
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMddHHmmss");
 
-    public static void initialize(Map<String, Object> config) {
+    public static void initialize(Map<String, Object> config) throws Exception{
         if (UtilsConstants.VALIDATE_KAFKA && !UtilsConstants.KAFKA_INITIALIZED){
             UtilsConstants.KAFKA_INITIALIZED = true;
             String kafkaBrokers = (String) config.get("brokers");
@@ -43,8 +44,9 @@ public class KafkaUtils {
             props.put(AdminClientConfig.SECURITY_PROTOCOL_CONFIG,"SSL");
             props.put(SslConfigs.SSL_PROTOCOL_CONFIG,"TLSv1.2");
             props.put(SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG,"TLSv1.2");
-            props.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, kafkaCertPath);
-            props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, kafkaCertPath);
+            File certFile = new File(KafkaUtils.class.getClassLoader().getResource(kafkaCertPath).getFile());
+            props.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, certFile.getAbsolutePath());
+            props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, certFile.getAbsolutePath());
             props.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, kafkaCertPass);
             props.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, kafkaCertPass);
             props.put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, kafkaCertPass);
