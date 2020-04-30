@@ -9,4 +9,10 @@ public class OtherUtils {
         UtilsConstants.VALIDATE_ENCRYPTION_KAFKA = Boolean.valueOf(validateEncryption) && Boolean.valueOf(validateKafka);
     }
 
+    public static boolean twoStringsEqual(String a, String b){
+        if ((a == null && b == null) || (a != null && a.equals(b))){
+            return true;
+        }
+        return false;
+    }
 }

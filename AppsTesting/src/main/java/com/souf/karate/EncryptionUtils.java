@@ -31,9 +31,7 @@ public class EncryptionUtils {
     private static XPath xpath = XPathFactory.newInstance().newXPath();
 
     public static void initialize(String encryptionEnv){
-        if ((UtilsConstants.VALIDATE_ENCRYPTION_DB || UtilsConstants.VALIDATE_ENCRYPTION_KAFKA)
-            && !UtilsConstants.ENCRYPTION_INITIALIZED){
-            UtilsConstants.ENCRYPTION_INITIALIZED = true;
+        if ((UtilsConstants.VALIDATE_ENCRYPTION_DB || UtilsConstants.VALIDATE_ENCRYPTION_KAFKA)){
             try{
                 String secretKey = null;
                 String salt = null;
@@ -59,7 +57,7 @@ public class EncryptionUtils {
         }
     }
 
-    public static String decrypt(String strToDecrypt) {
+    public static synchronized String decrypt(String strToDecrypt) {
         try {
             if (cipherDecrypt != null){
                 return new String(cipherDecrypt.doFinal(Base64.getDecoder().decode(strToDecrypt)));
@@ -69,8 +67,8 @@ public class EncryptionUtils {
         return strToDecrypt;
     }
 
-    public static Map<String, Object> validateDBEncryptionFromEvents(int eventId, String columnWithEncryption
-            , String tagWithEncryption, String compareDecryptedValueTo, Map<String, Object> eventRows) throws Exception{
+    public static Map<String, Object> validateDBEncryptionFromEvents(int eventId, String columnWithEncryption,
+               String tagWithEncryption, String compareDecryptedValueTo, Map<String, Object> eventRows) throws Exception{
         Map<String, Object> returnedMap = new HashMap<>();
         if (UtilsConstants.VALIDATE_ENCRYPTION_DB){
             JSONObject jsonObject = new JSONObject(eventRows);
@@ -98,8 +96,8 @@ public class EncryptionUtils {
         return returnedMap;
     }
 
-    public static Map<String, Object> validateKafkaEncryptionFromEvents(int eventId, String keyWithEncryption
-            , String tagWithEncryption, String compareDecryptedValueTo, Map<String, Object> data) throws Exception{
+    public static Map<String, Object> validateKafkaEncryptionFromEvents(int eventId, String keyWithEncryption,
+               String tagWithEncryption, String compareDecryptedValueTo, Map<String, Object> data) throws Exception{
         Map<String, Object> returnedMap = new HashMap<>();
         if (UtilsConstants.VALIDATE_ENCRYPTION_KAFKA){
             JSONObject jsonObject = new JSONObject(data);
@@ -114,6 +112,48 @@ public class EncryptionUtils {
             }
             InputSource source = new InputSource(new StringReader(messageText));
             String encryptedValue = xpath.evaluate(tagWithEncryption, source);
+            String decryptedValue = decrypt(encryptedValue);
+            returnedMap.put("passed",compareDecryptedValueTo.equals(decryptedValue));
+            returnedMap.put("reason",UtilsConstants.COMPARISON_RESULT);
+            returnedMap.put("encrypted value in tag",encryptedValue);
+            returnedMap.put("decrypted value in tag",decryptedValue);
+            returnedMap.put("value to compare to",compareDecryptedValueTo);
+        }else{
+            returnedMap.put("passed",true);
+            returnedMap.put("reason",UtilsConstants.VALIDATION_SKIPPED);
+        }
+        return returnedMap;
+    }
+
+    public static Map<String, Object> validateDBEncryptionFromLoginRequest(String keyWithEncryption,
+               String compareDecryptedValueTo, Map<String, Object> loginRow) throws Exception{
+        Map<String, Object> returnedMap = new HashMap<>();
+        if (UtilsConstants.VALIDATE_ENCRYPTION_DB){
+            JSONObject jsonObject = new JSONObject(loginRow);
+            JSONArray jsonArray = jsonObject.getJSONArray(UtilsConstants.FULL_DATA_KEY);
+            JSONObject jObject = jsonArray.getJSONObject(0);
+            String encryptedValue = jObject.getString(keyWithEncryption);
+            String decryptedValue = decrypt(encryptedValue);
+            returnedMap.put("passed",compareDecryptedValueTo.equals(decryptedValue));
+            returnedMap.put("reason",UtilsConstants.COMPARISON_RESULT);
+            returnedMap.put("encrypted value in tag",encryptedValue);
+            returnedMap.put("decrypted value in tag",decryptedValue);
+            returnedMap.put("value to compare to",compareDecryptedValueTo);
+        }else{
+            returnedMap.put("passed",true);
+            returnedMap.put("reason",UtilsConstants.VALIDATION_SKIPPED);
+        }
+        return returnedMap;
+    }
+
+    public static Map<String, Object> validateKafkaEncryptionFromLoginRequest(String keyWithEncryption,
+                    String compareDecryptedValueTo, Map<String, Object> data) throws Exception{
+        Map<String, Object> returnedMap = new HashMap<>();
+        if (UtilsConstants.VALIDATE_ENCRYPTION_KAFKA){
+            JSONObject jsonObject = new JSONObject(data);
+            JSONArray jsonArray = jsonObject.getJSONArray(UtilsConstants.FULL_DATA_KEY);
+            JSONObject jObject = new JSONObject(jsonArray.get(0).toString());
+            String encryptedValue = jObject.getString(keyWithEncryption);
             String decryptedValue = decrypt(encryptedValue);
             returnedMap.put("passed",compareDecryptedValueTo.equals(decryptedValue));
             returnedMap.put("reason",UtilsConstants.COMPARISON_RESULT);

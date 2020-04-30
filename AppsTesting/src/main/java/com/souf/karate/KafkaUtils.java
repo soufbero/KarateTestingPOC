@@ -22,14 +22,13 @@ public class KafkaUtils{
 
     private static Consumer<String, String> consumer;
 
-    private static Map<String, List<String>> transactionsAndMessagesMap = new HashMap<>();
+    private static Map<String, Map<String, List<String>>> transactionsAndMessagesMap = new HashMap<>();
     private static Map<String, Set<String>> transactionsAndTopicsMap = new HashMap<>();
 
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMddHHmmss");
 
     public static void initialize(Map<String, Object> config) throws Exception{
-        if (UtilsConstants.VALIDATE_KAFKA && !UtilsConstants.KAFKA_INITIALIZED){
-            UtilsConstants.KAFKA_INITIALIZED = true;
+        if (UtilsConstants.VALIDATE_KAFKA){
             String kafkaBrokers = (String) config.get("brokers");
             String kafkaTopics = (String) config.get("topics");
             String kafkaCertPath = (String) config.get("certPath");
@@ -56,8 +55,7 @@ public class KafkaUtils{
     }
 
     public static void startConsuming(){
-        if (UtilsConstants.VALIDATE_KAFKA && !UtilsConstants.KAFKA_CONSUMER_STARTED){
-            UtilsConstants.KAFKA_CONSUMER_STARTED = true;
+        if (UtilsConstants.VALIDATE_KAFKA){
             ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
             Runnable task = () -> {
                 ConsumerRecords<String, String> consumerRecords = consumer.poll(Duration.ofMillis(10));
@@ -76,14 +74,22 @@ public class KafkaUtils{
                         topics.add(topic);
                         transactionsAndTopicsMap.put(tranId,topics);
 
+                        Map<String,List<String>> allMessages;
+                        if (transactionsAndMessagesMap.containsKey(topic)){
+                            allMessages = transactionsAndMessagesMap.get(topic);
+                        }else{
+                            allMessages = new HashMap<>();
+                        }
+
                         List<String> messages;
-                        if (transactionsAndMessagesMap.containsKey(tranId)){
-                            messages = transactionsAndMessagesMap.get(tranId);
+                        if (allMessages.containsKey(tranId)){
+                            messages = allMessages.get(tranId);
                         }else{
                             messages = new ArrayList<>();
                         }
                         messages.add(message);
-                        transactionsAndMessagesMap.put(tranId,messages);
+                        allMessages.put(tranId,messages);
+                        transactionsAndMessagesMap.put(topic,allMessages);
                     });
                 }
             };
@@ -91,10 +97,10 @@ public class KafkaUtils{
         }
     }
 
-    public static Map<String, Object> validateKafkaEvents(String tranId, List<Integer> expectedEvents){
+    public static Map<String, Object> validateKafkaEvents(String topic, String tranId, List<Integer> expectedEvents){
         Map<String, Object> returnedMap = new HashMap<>();
         if (UtilsConstants.VALIDATE_KAFKA){
-            List<String> messages = transactionsAndMessagesMap.get(tranId);
+            List<String> messages = transactionsAndMessagesMap.get(topic).get(tranId);
             List<Integer> eventsIds = new ArrayList<>();
             messages.forEach(m ->{
                 JSONObject jsonObject = new JSONObject(m);
@@ -127,6 +133,42 @@ public class KafkaUtils{
             returnedMap.put("reason",UtilsConstants.COMPARISON_RESULT);
             returnedMap.put("Expected Topics",expectedTopics);
             returnedMap.put("Actual Topics",topics);
+        }else{
+            returnedMap.put("passed",true);
+            returnedMap.put("reason",UtilsConstants.VALIDATION_SKIPPED);
+        }
+        return returnedMap;
+    }
+
+    public static Map<String, Object> validateKafkaLogin(String topic, boolean isGoodLogin, String tranId, int count,
+                                                               String expectedUsername, String expectedInfo){
+        Map<String, Object> returnedMap = new HashMap<>();
+        if (UtilsConstants.VALIDATE_KAFKA){
+            String infoType;
+            String infoKey;
+            if (isGoodLogin){
+                infoType = "Expected Login Info";
+                infoKey = "loginInfo";
+            }else{
+                infoType = "Expected Reason";
+                infoKey = "reason";
+            }
+            List<String> messages = transactionsAndMessagesMap.get(topic).get(tranId);
+            boolean passed = true;
+            if (messages.size() != count){
+                passed = false;
+            }else{
+                JSONObject jsonObject = new JSONObject(messages.get(0));
+                if (!OtherUtils.twoStringsEqual(expectedUsername,jsonObject.optString("userName",null))
+                        || !OtherUtils.twoStringsEqual(expectedInfo,jsonObject.optString(infoKey,null))){
+                    passed = false;
+                }
+            }
+            returnedMap.put("reason",UtilsConstants.COMPARISON_RESULT);
+            returnedMap.put("Expected Username",expectedUsername);
+            returnedMap.put(infoType,expectedInfo);
+            returnedMap.put(UtilsConstants.FULL_DATA_KEY,messages);
+            returnedMap.put("passed",passed);
         }else{
             returnedMap.put("passed",true);
             returnedMap.put("reason",UtilsConstants.VALIDATION_SKIPPED);

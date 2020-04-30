@@ -8,8 +8,7 @@ public class UtilsConstants {
     public static boolean VALIDATE_KAFKA;
     public static boolean VALIDATE_ENCRYPTION_DB;
     public static boolean VALIDATE_ENCRYPTION_KAFKA;
-    public static boolean DB_INITIALIZED = false;
-    public static boolean KAFKA_INITIALIZED = false;
-    public static boolean KAFKA_CONSUMER_STARTED = false;
-    public static boolean ENCRYPTION_INITIALIZED = false;
+    public static final String APP_A_NAME = "AppA";
+    public static final String APP_B_NAME = "AppB";
+    public static final String APP_C_NAME = "AppC";
 }

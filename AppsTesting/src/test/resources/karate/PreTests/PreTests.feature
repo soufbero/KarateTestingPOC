@@ -2,7 +2,14 @@ Feature: Pre-Tests Setup
 
   Scenario: Setup Integration Points
     * def sleep = function(millis){ java.lang.Thread.sleep(millis) }
-    * def dbConfig = { user: '#(dbUsername)', pass: '#(dbPassword)', url: '#(dbUrl)', driver: '#(dbDriver)' }
+    * def dbConfig =
+        """
+          {
+            userAppA:'#(dbUsernameAppA)',passAppA:'#(dbPasswordAppA)',urlAppA:'#(dbUrlAppA)',driverAppA:'#(dbDriverAppA)',
+            userAppB:'#(dbUsernameAppB)',passAppB:'#(dbPasswordAppB)',urlAppB:'#(dbUrlAppB)',driverAppB:'#(dbDriverAppB)',
+            userAppC:'#(dbUsernameAppC)',passAppC:'#(dbPasswordAppC)',urlAppC:'#(dbUrlAppC)',driverAppC:'#(dbDriverAppC)'
+          }
+        """
     * def kafkaConfig = { brokers: '#(kafkaBrokers)', topics: '#(kafkaTopics)', certPath: '#(kafkaCertPath)', certPass: '#(kafkaCertPass)' }
     * def DbUtils = Java.type('com.souf.karate.DbUtils')
     * def EncodingUtils = Java.type('com.souf.karate.EncodingUtils')

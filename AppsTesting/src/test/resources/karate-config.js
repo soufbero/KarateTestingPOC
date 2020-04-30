@@ -7,7 +7,10 @@ function fn() {
 
     var config = {
         urlAppAapi1: '', urlAppBapi1: '', urlAppBapi2: '', urlAppCapi1: '',
-        validateDB:false, dbUrl: '', dbUsername: '', dbPassword: '', dbDriver: '',
+        validateDB:false,
+        dbUrlAppA: '', dbUsernameAppA: '', dbPasswordAppA: '', dbDriverAppA: '',
+        dbUrlAppB: '', dbUsernameAppB: '', dbPasswordAppB: '', dbDriverAppB: '',
+        dbUrlAppC: '', dbUsernameAppC: '', dbPasswordAppC: '', dbDriverAppC: '',
         validateKafka:false, kafkaBrokers:'', kafkaTopics:'', kafkaCertPath:'', kafkaCertPass:'',
         kafkaTopic1:'', kafkaTopic2:'', kafkaTopic3:'', kafkaTopic4:'', kafkaTopic5:'',
         validateEncryption:false, encryptionEnv:''
@@ -20,10 +23,18 @@ function fn() {
         config.urlAppCapi1 = 'https://localhost:8083/dev/api1';
         if (db === 'true'){
             config.validateDB = true;
-            config.dbUrl = 'jdbc:mysql://localhost:3306/appadevdb';
-            config.dbUsername = 'dbuser';
-            config.dbPassword = 'dbpassword';
-            config.dbDriver = 'com.mysql.cj.jdbc.Driver';
+            config.dbUrlAppA = 'jdbc:mysql://localhost:3306/appadevdb';
+            config.dbUsernameAppA = 'dbuser';
+            config.dbPasswordAppA = 'dbpassword';
+            config.dbDriverAppA = 'com.mysql.cj.jdbc.Driver';
+            config.dbUrlAppB = 'jdbc:mysql://localhost:3306/appbdevdb';
+            config.dbUsernameAppB = 'dbuser';
+            config.dbPasswordAppB = 'dbpassword';
+            config.dbDriverAppB = 'com.mysql.cj.jdbc.Driver';
+            config.dbUrlAppC = 'jdbc:mysql://localhost:3306/appcdevdb';
+            config.dbUsernameAppC = 'dbuser';
+            config.dbPasswordAppC = 'dbpassword';
+            config.dbDriverAppC = 'com.mysql.cj.jdbc.Driver';
         }
         if (kafka === 'true'){
             config.validateKafka = true;
@@ -62,10 +73,18 @@ function fn() {
         config.urlAppCapi1 = 'https://localhost:8083/qa/api1';
         if (db === 'true'){
             config.validateDB = true;
-            config.dbUrl = 'jdbc:mysql://localhost:3306/appaqadb';
-            config.dbUsername = 'dbuser';
-            config.dbPassword = 'dbpassword';
-            config.dbDriver = 'com.mysql.cj.jdbc.Driver';
+            config.dbUrlAppA = 'jdbc:mysql://localhost:3306/appaqadb';
+            config.dbUsernameAppA = 'dbuser';
+            config.dbPasswordAppA = 'dbpassword';
+            config.dbDriverAppA = 'com.mysql.cj.jdbc.Driver';
+            config.dbUrlAppB = 'jdbc:mysql://localhost:3306/appbqadb';
+            config.dbUsernameAppB = 'dbuser';
+            config.dbPasswordAppB = 'dbpassword';
+            config.dbDriverAppB = 'com.mysql.cj.jdbc.Driver';
+            config.dbUrlAppC = 'jdbc:mysql://localhost:3306/appcqadb';
+            config.dbUsernameAppC = 'dbuser';
+            config.dbPasswordAppC = 'dbpassword';
+            config.dbDriverAppC = 'com.mysql.cj.jdbc.Driver';
         }
         if (kafka === 'true'){
             config.validateKafka = true;

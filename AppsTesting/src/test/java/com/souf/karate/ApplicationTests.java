@@ -48,7 +48,7 @@ public class ApplicationTests {
         List<String> paths = Arrays.stream(
                 System.getProperty("apps").split(","))
                 .map(c -> "classpath:karate/" + c).collect(Collectors.toList());
-        Results results = Runner.parallel(null,paths,5,karateOutputPath);
+        Results results = Runner.parallel(null,paths,20,karateOutputPath);
         generateReport(karateOutputPath);
         assertEquals(0, results.getFailCount(), results.getErrorMessages());
     }
