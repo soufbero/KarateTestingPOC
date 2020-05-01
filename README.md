@@ -34,7 +34,7 @@ you will need to perform the initial setup.
 
 **Note:** these setup steps have been created on Windows 10 workstation. Please adjust accordingly to fit your system.
 
-#### MySQL Setup:
+### MySQL Setup:
 
 1- Download and install MySQL Server from [Download MySQL](https://dev.mysql.com/downloads/)
 
@@ -111,7 +111,7 @@ create table BAD_LOGINS(
 );
 ```
 
-#### Kafka Setup:
+### Kafka Setup:
 
 1- [Download Kafka](https://www.apache.org/dyn/closer.cgi?path=/kafka/2.4.0/kafka_2.13-2.4.0.tgz)
 
@@ -234,7 +234,7 @@ and validate that data is stored in DB and/or Kafka (you can use **KafkaTestCons
 
 
 ## Testing
-#### First Test and Reports:
+### First Test and Reports:
 Browse to **AppsTesting** module and run:
 ```
 mvn clean test -Denv=dev -Dapps=AppA,AppB,AppC -Dsmoke=true -Ddb=true -Dkafka=true -Dencryption=true
@@ -245,7 +245,7 @@ AppsTesting/target/cucumber-html-reports/overview-features.html
 ```
 
 
-#### Testing Options:
+### Testing Options:
 When running a test, the following options are available:
 * **-Denv**: can be either **dev** or **qa**
 * **-Dapps**: tester can choose which applications to test in a comma separated list.
@@ -259,7 +259,7 @@ These options update configuration values in **karate-config.js** file before te
 **_feature_** files then use those values to decide which tests to run and which to skip. 
 
 
-#### Testing Flow:
+### Testing Flow:
 1- The command **mvn clean test** scans the **AppsTesting** module for any java classes in the **test** folder 
 and finds **ApplicationTests.java**
 
