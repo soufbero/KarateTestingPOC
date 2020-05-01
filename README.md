@@ -1,12 +1,12 @@
 # Karate Testing POC
 
 This POC provides an example of Karate testing framework integrated with RDBMS, Kafka, 
-SSL Secured APIs, and few other features.
+SSL secured APIs, and few other features.
 
 
 ## Modules Breakdown
 
-The following Project has 6 modules:
+The following project has 6 modules:
 * **AppA**: The first application to be tested.
 * **AppB**: The second application to be tested.
 * **AppC**: The third application to be tested.
@@ -21,6 +21,7 @@ To disable this integration, use the following flags in **application.properties
 
 ```
 db.enabled=true
+
 kafka.enabled=true
 ```
 
@@ -29,7 +30,7 @@ kafka.enabled=true
 
 As previously mentioned, each application has an optional integration with MySQL and Kafka.
 If you are interested in investigating Karate's potential with either of these technologies, 
-You will need initial setup.
+you will need to perform the initial setup.
 
 **Note:** these setup steps have been created on Windows 10 workstation. Please adjust accordingly to fit your system.
 
@@ -48,7 +49,7 @@ CREATE DATABASE appcdevdb;
 CREATE DATABASE appcqadb;
 ```
 
-3- Create a User and grant all Privileges on the databases.
+3- Create a User and grant it all Privileges on the databases.
 ```
 CREATE USER 'dbuser'@'%' IDENTIFIED BY 'dbpassword';
 
@@ -116,17 +117,19 @@ create table BAD_LOGINS(
 
 2- untar archive. 
 
-**Note:** For the upcoming steps, the path of Kafka folder is based on path C:\Kafka\Karate\kafka_2.13-2.4.0 
-so modify them according to your Kafka paths
+**Note:** For the upcoming steps, the paths of commands are based on C:\Kafka\Karate\kafka_2.13-2.4.0 being the Kafka
+installation path. So modify any command that specifies that path based on your actual Kafka path.
 
 3- Go to config folder in C:\Kafka\Karate\kafka_2.13-2.4.0\config
 
-4- Create two copies in the same folder of zookeeper.properties called zookeeperDEV.properties and zookeeperQA.properties
+4- Create two copies in the same folder of zookeeper.properties and call them 
+zookeeperDEV.properties and zookeeperQA.properties
 
-5- Create two copies in the same folder of server.properties called serverDEV.properties and serverQA.properties
+5- Create two copies in the same folder of server.properties call them 
+serverDEV.properties and serverQA.properties
 
 6- Copy **KarateKafkaDev.jks** and **KarateKafkaQa.jks** files to C:\Kafka\Karate 
-from the **resources/certs/kafka** folder in **AppsCommon** module
+from the **resources/certs/kafka** folder in **AppsCommon** module.
 
 7- Modify each of the four files to have these values added/updated:
 
@@ -173,7 +176,6 @@ log.dirs=C:/Kafka/Karate/kafka_2.13-2.4.0/data/broker-qa
 zookeeper.connect=localhost:2182
 ```
 
-
 8- Start 4 terminals and on each, browse to path C:\Kafka\Karate\kafka_2.13-2.4.0
 
 9- Start ZooKeeper and Kafka Brokers in this order in the four terminals:
@@ -213,7 +215,7 @@ bin\windows\kafka-topics.bat --create --zookeeper localhost:2181 --replication-f
 bin\windows\kafka-topics.bat --create --zookeeper localhost:2182 --replication-factor 1 --partitions 1 --topic TopicBadLoginAppC
 ```
 
-12- Validate that each of the Kafka Cluster (DEV and QA) has all the 5 Topics:
+12- Validate that each of the Kafka Clusters (DEV and QA) has all the 5 Topics:
 ```
 bin\windows\kafka-topics.bat --list --zookeeper localhost:2181
 
@@ -227,7 +229,7 @@ should be required.
 
 You can post test requests using the included JKS/PFX file (KarateApiDevQA.jks/KarateApiDevQA.pfx) in **AppsCommon** 
 _resources/certs/api_ folder
-and validate that data is stored in DB and/or Kafka (you can use **KafkaTestConsumer** module for that).
+and validate that data is stored in DB and/or Kafka (you can use **KafkaTestConsumer** module for the latter).
 
 
 
@@ -237,7 +239,7 @@ Browse to **AppsTesting** module and run:
 ```
 mvn clean test -Denv=dev -Dapps=AppA,AppB,AppC -Dsmoke=true -Ddb=true -Dkafka=true -Dencryption=true
 ```
-Multiple Reports will be generated in the target folder with the main one being under:
+Multiple reports will be generated in the target folder with the main one being under:
 ```
 AppsTesting/target/cucumber-html-reports/overview-features.html
 ```
@@ -246,7 +248,7 @@ AppsTesting/target/cucumber-html-reports/overview-features.html
 #### Testing Options:
 When running a test, the following options are available:
 * **-Denv**: can be either **dev** or **qa**
-* **-Dapps**: tester can choose which applications to test in a comma separated list
+* **-Dapps**: tester can choose which applications to test in a comma separated list.
 * **-Dsmoke**: can be either **true** or **false**. When true, **Smoke.feature** test file is run fist successfully 
 before actual applications testings starts.
 * **-Ddb**: can be either **true** or **false**. Toggle validating DB integration.
@@ -261,16 +263,16 @@ These options update configuration values in **karate-config.js** file before te
 1- The command **mvn clean test** scans the **AppsTesting** module for any java classes in the **test** folder 
 and finds **ApplicationTests.java**
 
-2- Karate testing framework will load all the Testing options (JVM arguments) to **karate-config.js** and 
+2- Karate testing framework will load all the testing options (JVM arguments) to **karate-config.js** and 
 update the config values which the **feature** files are able to use.
 
-3- The method annotated with **@BeforeAll** will run first, this method runs **PreTests.feature** file to initialize
+3- The method annotated with **@BeforeAll** will run first. This method runs **PreTests.feature** file to initialize
 integration classes for testing. After that, if smoke testing option is enabled, **Smoke.feature** file will run 
-using tags based on the **apps** jvm argument. Smoke test are executed in parallel.
+using tags based on the **apps** jvm argument. Smoke tests are executed in parallel.
 
 4- If step 3 is completed successfully, the method annotated with **@Test** will run the test cases in
-AppA.feature and/or AppB.feature and/or AppC.feature based on the **apps** jvm argument. 
-Application test are executed in parallel at the **Feature** file and **Scenario** levels.
+**AppA.feature** and/or **AppB.feature** and/or **AppC.feature** based on the **apps** jvm argument. 
+Application tests are executed in parallel at the **Feature** file and **Scenario** levels.
 
 5- Reports are generated in **target** folder.
 
