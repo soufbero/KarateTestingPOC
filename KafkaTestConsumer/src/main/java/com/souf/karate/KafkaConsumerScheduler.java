@@ -10,6 +10,7 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -42,11 +43,11 @@ public class KafkaConsumerScheduler {
     @Value("${kafka.topic.5}")
     private String topic5;
     @Value("${kafka.ssl.cert.dev}")
-    private String kafkaSSLCertPathDEV;
+    private Resource kafkaSSLCertPathDEV;
     @Value("${kafka.ssl.pass.dev}")
     private String kafkaSSLCertPassDEV;
     @Value("${kafka.ssl.cert.qa}")
-    private String kafkaSSLCertPathQA;
+    private Resource kafkaSSLCertPathQA;
     @Value("${kafka.ssl.pass.qa}")
     private String kafkaSSLCertPassQA;
 
@@ -54,7 +55,7 @@ public class KafkaConsumerScheduler {
     private Consumer<String, String> consumerQA;
 
     @PostConstruct
-    private void initialize(){
+    private void initialize() throws Exception{
         Properties propsDev = new Properties();
         propsDev.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         propsDev.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
@@ -63,8 +64,8 @@ public class KafkaConsumerScheduler {
         propsDev.put(AdminClientConfig.SECURITY_PROTOCOL_CONFIG,"SSL");
         propsDev.put(SslConfigs.SSL_PROTOCOL_CONFIG,"TLSv1.2");
         propsDev.put(SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG,"TLSv1.2");
-        propsDev.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, kafkaSSLCertPathDEV);
-        propsDev.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, kafkaSSLCertPathDEV);
+        propsDev.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, kafkaSSLCertPathDEV.getFile().getAbsolutePath());
+        propsDev.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, kafkaSSLCertPathDEV.getFile().getAbsolutePath());
         propsDev.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, kafkaSSLCertPassDEV);
         propsDev.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, kafkaSSLCertPassDEV);
         propsDev.put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, kafkaSSLCertPassDEV);
@@ -79,8 +80,8 @@ public class KafkaConsumerScheduler {
         propsQA.put(AdminClientConfig.SECURITY_PROTOCOL_CONFIG,"SSL");
         propsQA.put(SslConfigs.SSL_PROTOCOL_CONFIG,"TLSv1.2");
         propsQA.put(SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG,"TLSv1.2");
-        propsQA.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, kafkaSSLCertPathQA);
-        propsQA.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, kafkaSSLCertPathQA);
+        propsQA.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, kafkaSSLCertPathQA.getFile().getAbsolutePath());
+        propsQA.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, kafkaSSLCertPathQA.getFile().getAbsolutePath());
         propsQA.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, kafkaSSLCertPassQA);
         propsQA.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, kafkaSSLCertPassQA);
         propsQA.put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, kafkaSSLCertPassQA);
