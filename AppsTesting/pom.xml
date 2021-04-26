@@ -20,7 +20,7 @@
         <mysql-connector.version>8.0.19</mysql-connector.version>
         <kafa-clients.version>2.5.0</kafa-clients.version>
         <json.version>20190722</json.version>
-        <commons-io.version>2.6</commons-io.version>
+        <commons-io.version>2.7</commons-io.version>
         <cucumber-reporting.version>5.2.1</cucumber-reporting.version>
     </properties>
 
