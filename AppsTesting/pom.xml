@@ -17,7 +17,7 @@
         <karate.version>0.9.5</karate.version>
         <surefire.version>2.22.2</surefire.version>
         <spring-jdbc.version>5.2.5.RELEASE</spring-jdbc.version>
-        <mysql-connector.version>8.0.19</mysql-connector.version>
+        <mysql-connector.version>8.0.28</mysql-connector.version>
         <kafa-clients.version>2.5.0</kafa-clients.version>
         <json.version>20190722</json.version>
         <commons-io.version>2.6</commons-io.version>
